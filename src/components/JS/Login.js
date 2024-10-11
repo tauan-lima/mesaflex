@@ -1,10 +1,15 @@
 import style from '../CSS/Login.module.css';
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import eyeOpenIcon from '../../assets/icon/eyeOpen.png';
+import eyeCloseIcon from '../../assets/icon/eyeClose.png';
 
 function Login() {
   const containerRef = useRef(null);
   const registerBtnRef = useRef(null);
   const loginBtnRef = useRef(null);
+  const [isPasswordVisibleSignup, setPasswordVisibleSignup] = useState(false);
+  const [isPasswordVisibleSignin, setPasswordVisibleSignin] = useState(false);
+  const [phone, setPhone] = useState('');
 
   useEffect(() => {
     const container = containerRef.current;
@@ -26,7 +31,25 @@ function Login() {
       registerBtn.removeEventListener('click', handleRegisterClick);
       loginBtn.removeEventListener('click', handleLoginClick);
     };
-  }, []); 
+  }, []);
+
+  const formatarTelefone = (event) => {
+    let value = event.target.value.replace(/\D/g, '');
+    if (value.length >= 11) {
+      value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+    } else if (value.length >= 2) {
+      value = value.replace(/^(\d{2})(\d{0,5})(\d{0,4})$/, '($1) $2$3');
+    }
+    setPhone(value);
+  };
+
+  const togglePasswordSignup = () => {
+    setPasswordVisibleSignup(!isPasswordVisibleSignup);
+  };
+
+  const togglePasswordSignin = () => {
+    setPasswordVisibleSignin(!isPasswordVisibleSignin);
+  };
 
   return (
     <>
@@ -36,11 +59,27 @@ function Login() {
             <h1>Registre-se</h1>
             <span>Informe seus dados para registro</span>
             <input type="text" placeholder="Nome" />
-            <input type="tel" id="telefone" placeholder="Número" maxLength="15" />
+            <input 
+              type="tel" 
+              placeholder="Número" 
+              maxLength="15" 
+              value={phone} 
+              onChange={formatarTelefone} 
+            />
             <input type="email" placeholder="Email" />
             <div className={style.passwordContainer}>
-              <input type="password" id="senhaSignup" placeholder="Senha" />
-              <img src={require('../../assets/icon/eyeClose.png')} alt="Senha Oculta" className={style.togglePassword}/> 
+              <input 
+                type={isPasswordVisibleSignup ? "text" : "password"} 
+                id="senhaSignup" 
+                placeholder="Senha" 
+              />
+              <img 
+                src={isPasswordVisibleSignup ? eyeCloseIcon : eyeOpenIcon} 
+                alt="Senha Oculta" 
+                className={style.togglePassword} 
+                onClick={togglePasswordSignup} 
+                style={{ cursor: 'pointer' }} 
+              />
             </div>
             <button type="button">Registre-se</button>
           </form>
@@ -51,8 +90,18 @@ function Login() {
             <span>Use seu email e senha</span>
             <input type="email" placeholder="Email" />
             <div className={style.passwordContainer}>
-              <input type="password" id="senhaSignin" placeholder="Senha" />
-              <img src={require('../../assets/icon/eyeClose.png')} alt="Senha Oculta" className={style.togglePassword} />
+              <input 
+                type={isPasswordVisibleSignin ? "text" : "password"} 
+                id="senhaSignin" 
+                placeholder="Senha" 
+              />
+              <img 
+                src={isPasswordVisibleSignin ? eyeCloseIcon : eyeOpenIcon} 
+                alt="Senha Oculta" 
+                className={style.togglePassword} 
+                onClick={togglePasswordSignin} 
+                style={{ cursor: 'pointer' }} 
+              />
             </div>
             <a href="https://">Esqueceu sua senha?</a>
             <button type="button">Login</button>
